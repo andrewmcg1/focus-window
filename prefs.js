@@ -155,11 +155,11 @@ const FocusWidget = GObject.registerClass(
       this.applicationToFocus.set_selected(
         this.getAppPositionFromId(this.settings.applicationToFocus)
       );
-      this.titleToMatch.set_text(this.settings.titleToMatch);
-      this.exactTitleMatch.set_active(this.settings.exactTitleMatch);
-      this.launchApplication.set_active(this.settings.launchApplication);
-      this.commandLineArguments.set_text(this.settings.commandLineArguments);
-      this.keyboardShortcut.set_accelerator(this.settings.keyboardShortcut);
+      this.titleToMatch.set_text(this.settings.titleToMatch || "");
+      this.exactTitleMatch.set_active(this.settings.exactTitleMatch || false);
+      this.launchApplication.set_active(this.settings.launchApplication || true);
+      this.commandLineArguments.set_text(this.settings.commandLineArguments || "");
+      this.keyboardShortcut.set_accelerator(this.settings.keyboardShortcut || "");
     }
 
     populateApplications() {
