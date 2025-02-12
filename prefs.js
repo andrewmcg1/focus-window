@@ -164,7 +164,7 @@ const FocusWidget = GObject.registerClass(
       this.titleToMatch.set_text(this.settings.titleToMatch || "");
       this.exactTitleMatch.set_active(this.settings.exactTitleMatch || false);
       this.launchApplication.set_active(this.settings.launchApplication || true);
-      this.dontChangeDesktop.set_active(this.settings.dont_change_desktop || false);
+      this.dontChangeDesktop.set_active(this.settings.dontChangeDesktop || false);
       this.moveToCurrentDesktop.set_active(this.settings.moveToCurrentDesktop || false);
       this.commandLineArguments.set_text(this.settings.commandLineArguments || "");
       this.keyboardShortcut.set_accelerator(this.settings.keyboardShortcut || "");
