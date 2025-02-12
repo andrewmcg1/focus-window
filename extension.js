@@ -109,7 +109,7 @@ class Extension {
             if (!application) return false;
 
             // get application windows and filter appropriately
-            const appWindows = application.get_windows().filter((window) => {
+            let appWindows = application.get_windows().filter((window) => {
               if (!setting.titleToMatch) return true;
               if (setting.exactTitleMatch)
                 return window.get_title() === setting.titleToMatch;
@@ -125,12 +125,17 @@ class Extension {
             // get the currently focused window
             const focusedWindow = global.display.get_focus_window()?.get_id();
 
+
             // Get the currently active workspace
             const activeWorkspace = global.workspace_manager.get_active_workspace();
             const activeWorkspaceWindows = appWindows.filter((window) => window.get_workspace().index() === activeWorkspace.index());
+            
+            if (setting.dontChangeDesktop) {
+              appWindows = activeWorkspaceWindows;
+            }
 
             // launch the application
-            if (!activeWorkspaceWindows.length && setting.launchApplication) {
+            if (!appWindows.length && setting.launchApplication) {
               // launch the application normally
               if (!setting.commandLineArguments) {
                 return application.open_new_window(-1);
@@ -151,21 +156,31 @@ class Extension {
 
             // cycle through open windows if there are multiple
 
-            if (activeWorkspaceWindows.length > 1) {
-              return Main.activateWindow(activeWorkspaceWindows[activeWorkspaceWindows.length - 1]);
+            if (appWindows.length > 1) {
+              return Main.activateWindow(appWindows[appWindows.length - 1]);
             }
 
             // Minimize window if it is already focused and there is only 1 window
             if (
-              activeWorkspaceWindows.length === 1 &&
-              focusedWindow === activeWorkspaceWindows[0].get_id()
+              appWindows.length === 1 &&
+              focusedWindow === appWindows[0].get_id()
             ) {
-              return activeWorkspaceWindows[0].minimize();
+              return appWindows[0].minimize();
             }
 
             // Draw focus to the window if it is not already focused
-            if (activeWorkspaceWindows.length === 1) {
-              return Main.activateWindow(activeWorkspaceWindows[0]);
+            if (appWindows.length === 1) {
+              const appWindow = appWindows[0];
+              if (setting.moveToCurrentDesktop){
+                // Get the currently active workspace
+                const windowWorkspaceIndex = appWindow.get_workspace().index();
+                // If the window is not in the active workspace, move it
+                // Move the window to the active workspace
+                if (activeWorkspace.index() !== windowWorkspaceIndex){
+                  appWindow.change_workspace(activeWorkspace);
+                }
+              }
+              return Main.activateWindow(appWindow);
             }
 
             return false;
