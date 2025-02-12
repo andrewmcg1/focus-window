@@ -125,8 +125,12 @@ class Extension {
             // get the currently focused window
             const focusedWindow = global.display.get_focus_window()?.get_id();
 
+            // Get the currently active workspace
+            const activeWorkspace = global.workspace_manager.get_active_workspace();
+            const activeWorkspaceWindows = appWindows.filter((window) => window.get_workspace().index() === activeWorkspace.index());
+
             // launch the application
-            if (!appWindows.length && setting.launchApplication) {
+            if (!activeWorkspaceWindows.length && setting.launchApplication) {
               // launch the application normally
               if (!setting.commandLineArguments) {
                 return application.open_new_window(-1);
@@ -146,47 +150,22 @@ class Extension {
             }
 
             // cycle through open windows if there are multiple
-            if (appWindows.length > 1) {
-              return Main.activateWindow(appWindows[appWindows.length - 1]);
+
+            if (activeWorkspaceWindows.length > 1) {
+              return Main.activateWindow(activeWorkspaceWindows[activeWorkspaceWindows.length - 1]);
             }
 
             // Minimize window if it is already focused and there is only 1 window
             if (
-              appWindows.length === 1 &&
-              focusedWindow === appWindows[0].get_id()
+              activeWorkspaceWindows.length === 1 &&
+              focusedWindow === activeWorkspaceWindows[0].get_id()
             ) {
-              return appWindows[0].minimize();
+              return activeWorkspaceWindows[0].minimize();
             }
 
             // Draw focus to the window if it is not already focused
-            if (appWindows.length === 1) {
-              // Get the currently active workspace
-              const appWindow = appWindows[0];
-              const activeWorkspace = global.workspace_manager.get_active_workspace();
-              const windowWorkspaceIndex = appWindow.get_workspace().index();
-              // If the window is not in the active workspace, open it
-              // Move the window to the active workspace
-              if (activeWorkspace.index() !== windowWorkspaceIndex){
-                //appWindow.change_workspace(activeWorkspace);
-                // launch the application normally
-                if (!setting.commandLineArguments) {
-                  return application.open_new_window(-1);
-                }
-
-                // launch the application with the overriden command line arguments
-                const context = global.create_app_launch_context(0, -1);
-                const newApplication = Gio.AppInfo.create_from_commandline(
-                  application.get_app_info().get_executable() +
-                    " " +
-                    setting.commandLineArguments,
-                  null,
-                  Gio.AppInfoCreateFlags.NONE
-                );
-
-                newApplication.launch([], context);
-              }
-
-              return Main.activateWindow(appWindow);
+            if (activeWorkspaceWindows.length === 1) {
+              return Main.activateWindow(activeWorkspaceWindows[0]);
             }
 
             return false;
