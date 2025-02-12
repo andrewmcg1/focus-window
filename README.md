@@ -71,6 +71,14 @@ By default, the specified title does not need to be an exact match. Toggling thi
 
 By default, a new window will be launched if there are no windows that already exist (or no windows that match the title). Toggling this off will ensure that no new windows will be launched.
 
+### Don't Change Desktops
+
+By default windows open over different desktops will change desktop to focus. Enabling this setting seperates different desktops entirely for the app.
+
+### Move to Current Desktop
+
+Move a window to the current desktop to focus it instead of changing desktops.
+
 ### Keyboard Shortcut
 
 This is the keyboard shortcut that focuses (and potentially launches) the application. If multiple windows are found, repeat presses of the keyboard shortcut will cycle through the various windows. If only one window is found, repeate presses of the keyboard shortcut when the window is already focused will minimize it.
